@@ -24,13 +24,13 @@ func fillQueue(queue workqueue.Interface) {
 //
 // Read from the queue and print results
 //
-func readFromQueue(queue workqueue.Interface, stop chan int) {
+func readFromQueue(queue workqueue.Interface, stop chan struct{}) {
 	time.Sleep(3 * time.Second)
 	for {
 		item, shutdown := queue.Get()
 		if shutdown {
 			// signal that we are done
-			stop <- -1
+			stop <- struct{}{}	
 			return
 		}
 		fmt.Printf("Got item[shutdown = %t]: %s\n", shutdown, item)
@@ -41,7 +41,7 @@ func readFromQueue(queue workqueue.Interface, stop chan int) {
 func main() {
 	fmt.Println("Starting main")
 	// Create a channel
-	stop := make(chan int)
+	stop := make(chan struct{})
 	// Create a queue.
 	myQueue := workqueue.New()
 	// Create our first worker thread.  This goroutine will
