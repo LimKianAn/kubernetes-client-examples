@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"path/filepath"
 
@@ -27,7 +28,8 @@ func main() {
 	}
 
 	coreClient := clientset.CoreV1()
-	nodeList, err := coreClient.Nodes().List(metav1.ListOptions{})
+	ctx := context.Background()
+	nodeList, err := coreClient.Nodes().List(ctx, metav1.ListOptions{})
 	if err != nil {
 		panic(err)
 	}

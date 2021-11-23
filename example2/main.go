@@ -1,12 +1,14 @@
 package main
 
 import (
+	"context"
+	"path/filepath"
+
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/client-go/util/homedir"
-	"path/filepath"
 )
 
 func main() {
@@ -25,6 +27,7 @@ func main() {
 
 	coreClient := clientset.CoreV1()
 
+	ctx := context.Background()
 	pod := &v1.Pod{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "Pod",
@@ -35,14 +38,14 @@ func main() {
 		},
 		Spec: v1.PodSpec{
 			Containers: []v1.Container{
-				v1.Container{
+				{
 					Name:  "my-ctr",
 					Image: "httpd:alpine",
 				},
 			},
 		},
 	}
-	_, err = coreClient.Pods("default").Create(pod)
+	_, err = coreClient.Pods("default").Create(ctx, pod, metav1.CreateOptions{})
 	if err != nil {
 		panic(err)
 	}
